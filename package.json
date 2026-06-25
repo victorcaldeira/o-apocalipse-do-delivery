@@ -1,0 +1,39 @@
+{
+  "name": "o-apocalipse-do-delivery",
+  "version": "1.0.0",
+  "description": "Microsserviço resiliente de checkout da plataforma EntregasJá",
+  "main": "src/server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest --runInBand",
+    "start": "node src/server.js",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --runInBand",
+    "bdd": "cucumber-js",
+    "mutation": "stryker run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorcaldeira/o-apocalipse-do-delivery.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/victorcaldeira/o-apocalipse-do-delivery/issues"
+  },
+  "homepage": "https://github.com/victorcaldeira/o-apocalipse-do-delivery#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^13.0.0",
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/jest-runner": "^9.6.1",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
+  }
+}
