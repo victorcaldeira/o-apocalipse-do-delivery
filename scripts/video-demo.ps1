@@ -14,6 +14,8 @@ New-Item -ItemType Directory -Force $diretorioLog | Out-Null
 
 $data = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'
 $arquivoLog = Join-Path $diretorioLog "demonstracao-$data.txt"
+$arquivoBlackFridayJson = Join-Path $diretorioLog "black-friday-$data.json"
+$arquivoGatewayJson = Join-Path $diretorioLog "gateway-caos-$data.json"
 
 function Titulo {
   param([string]$Texto)
@@ -151,7 +153,7 @@ try {
 
   & k6 run `
     --no-color `
-    --summary-export '.\docs\evidencias\performance\black-friday-video.json' `
+    --summary-export $arquivoBlackFridayJson `
     '.\tests\performance\black-friday.js'
 
   Validar 'Black Friday' $LASTEXITCODE
@@ -184,7 +186,7 @@ try {
   Validar 'Identificação da rede Docker' $LASTEXITCODE
 
   $scripts = (Resolve-Path '.\tests\performance').Path
-  $evidencias = (Resolve-Path '.\docs\evidencias\performance').Path
+  $evidencias = $diretorioLog
 
   & docker run --rm `
     --network $redeDocker `
@@ -194,7 +196,7 @@ try {
     grafana/k6:latest `
     run `
     --no-color `
-    --summary-export '/evidencias/thundering-herd-video.json' `
+    --summary-export "/evidencias/thundering-herd-$data.json" `
     '/scripts/thundering-herd.js'
 
   Validar 'Thundering Herd' $LASTEXITCODE
@@ -254,7 +256,7 @@ try {
 
   & k6 run `
     --no-color `
-    --summary-export '.\docs\evidencias\performance\gateway-caos-video.json' `
+    --summary-export $arquivoGatewayJson `
     '.\tests\performance\gateway-caos.js'
 
   Validar 'Caos no gateway' $LASTEXITCODE

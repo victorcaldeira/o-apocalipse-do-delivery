@@ -5,3 +5,5 @@ reports/coverage/
 .env
 *.log
 reports/mutation/
+
+docs/evidencias/video/
