@@ -1,0 +1,25 @@
+﻿Resultado final do teste de mutação
+
+Mutantes gerados: 282
+Mortos: 257
+Timeouts: 5
+Sobreviventes: 14
+Sem cobertura: 3
+Erros de execução: 3
+
+Mutation Score total: 93,91%
+Mutation Score coberto: 94,93%
+
+Resultado inicial: 81,14%
+Resultado final: 93,91%
+Evolução: 12,77 pontos percentuais
+
+Arquivos em destaque:
+app.js: 100,00%
+GatewayPagamentoResiliente.js: 96,36%
+PedidoValidator.js: 96,43%
+
+Observação:
+Durante a execução ocorreram avisos de rejeições assíncronas e reinicializações
+de processos filhos no Node.js 24. Apesar disso, o Stryker concluiu a análise,
+processou os 282 mutantes e gerou normalmente os relatórios HTML e JSON.
