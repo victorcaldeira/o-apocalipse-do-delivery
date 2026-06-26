@@ -136,4 +136,73 @@ describe('GatewayPagamentoResiliente', () => {
       expect(esperaFn).toHaveBeenCalledTimes(3);
     });
   });
+
+  describe('circuit breaker', () => {
+    test('deve falhar rapidamente sem chamar o gateway quando o circuito estiver aberto', async () => {
+      const erroCircuito = Object.assign(
+        new Error('Circuit breaker aberto'),
+        {
+          code: 'CIRCUIT_BREAKER_ABERTO'
+        }
+      );
+
+      const circuitBreaker = {
+        verificarPermissao: jest.fn(() => {
+          throw erroCircuito;
+        }),
+        registrarSucesso: jest.fn(),
+        registrarFalha: jest.fn()
+      };
+
+      const gatewayPagamento = {
+        cobrar: jest.fn().mockResolvedValue({
+          status: 'APROVADO'
+        })
+      };
+
+      const esperaFn = jest
+        .fn()
+        .mockResolvedValue(undefined);
+
+      const gatewayResiliente =
+        new GatewayPagamentoResiliente({
+          gatewayPagamento,
+          circuitBreaker,
+          timeoutMs: 2000,
+          maxTentativas: 4,
+          intervaloEsperaMs: 500,
+          esperaFn
+        });
+
+      await expect(
+        gatewayResiliente.cobrar(
+          150,
+          {
+            numero: '4111111111111111',
+            validade: '12/30',
+            cvv: '123'
+          }
+        )
+      ).rejects.toBe(erroCircuito);
+
+      expect(
+        circuitBreaker.verificarPermissao
+      ).toHaveBeenCalledTimes(1);
+
+      expect(
+        gatewayPagamento.cobrar
+      ).not.toHaveBeenCalled();
+
+      expect(
+        circuitBreaker.registrarSucesso
+      ).not.toHaveBeenCalled();
+
+      expect(
+        circuitBreaker.registrarFalha
+      ).not.toHaveBeenCalled();
+
+      expect(esperaFn).not.toHaveBeenCalled();
+    });
+  });
 });
+
