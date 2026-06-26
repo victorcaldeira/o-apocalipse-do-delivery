@@ -13,28 +13,83 @@
 class GatewayPagamentoResiliente {
   constructor({
     gatewayPagamento,
-    timeoutMs = 2000
+    timeoutMs = 2000,
+    maxTentativas = 4,
+    intervaloEsperaMs = 500,
+    esperaFn
   }) {
     this.gatewayPagamento = gatewayPagamento;
     this.timeoutMs = timeoutMs;
+    this.maxTentativas = maxTentativas;
+    this.intervaloEsperaMs = intervaloEsperaMs;
+
+    this.esperaFn =
+      esperaFn ||
+      ((tempoMs) =>
+        new Promise((resolve) => {
+          setTimeout(resolve, tempoMs);
+        }));
   }
 
   async cobrar(valor, cartao) {
+    let ultimaFalha;
+
+    for (
+      let tentativa = 1;
+      tentativa <= this.maxTentativas;
+      tentativa += 1
+    ) {
+      try {
+        return await this.executarComTimeout(
+          valor,
+          cartao
+        );
+      } catch (erro) {
+        ultimaFalha = erro;
+
+        const possuiNovaTentativa =
+          tentativa < this.maxTentativas;
+
+        const deveTentarNovamente =
+          possuiNovaTentativa &&
+          this.ehFalhaTransitoria(erro);
+
+        if (!deveTentarNovamente) {
+          throw erro;
+        }
+
+        await this.esperaFn(
+          this.intervaloEsperaMs
+        );
+      }
+    }
+
+    throw ultimaFalha;
+  }
+
+  async executarComTimeout(valor, cartao) {
     let identificadorTimeout;
 
     const chamadaGateway = Promise
       .resolve()
       .then(() =>
-        this.gatewayPagamento.cobrar(valor, cartao)
+        this.gatewayPagamento.cobrar(
+          valor,
+          cartao
+        )
       );
 
-    const limiteDeTempo = new Promise((_, rejeitar) => {
-      identificadorTimeout = setTimeout(() => {
-        rejeitar(
-          new GatewayTimeoutError(this.timeoutMs)
-        );
-      }, this.timeoutMs);
-    });
+    const limiteDeTempo = new Promise(
+      (_, rejeitar) => {
+        identificadorTimeout = setTimeout(() => {
+          rejeitar(
+            new GatewayTimeoutError(
+              this.timeoutMs
+            )
+          );
+        }, this.timeoutMs);
+      }
+    );
 
     try {
       return await Promise.race([
@@ -44,6 +99,24 @@ class GatewayPagamentoResiliente {
     } finally {
       clearTimeout(identificadorTimeout);
     }
+  }
+
+  ehFalhaTransitoria(erro) {
+    if (erro instanceof GatewayTimeoutError) {
+      return true;
+    }
+
+    const codigosTransitorios = [
+      'ECONNRESET',
+      'ECONNREFUSED',
+      'ETIMEDOUT',
+      'EHOSTUNREACH',
+      'ENETUNREACH'
+    ];
+
+    return codigosTransitorios.includes(
+      erro?.code
+    );
   }
 }
 
