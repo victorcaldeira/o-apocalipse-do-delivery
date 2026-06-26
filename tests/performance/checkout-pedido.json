@@ -1,0 +1,9 @@
+{
+  "clienteEmail": "cliente@entregasja.com",
+  "valor": 150,
+  "cartao": {
+    "numero": "4111111111111111",
+    "validade": "12/30",
+    "cvv": "123"
+  }
+}
