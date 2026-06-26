@@ -1,0 +1,238 @@
+﻿**********************
+Início da transcrição do Windows PowerShell
+Hora de início: 20260626191342
+Nome de Usuário: DESKTOP-SII23HM\PC
+Executar como Usuário: DESKTOP-SII23HM\PC
+Nome da Configuração: 
+Computador: DESKTOP-SII23HM (Microsoft Windows NT 10.0.26200.0)
+Aplicativo Host: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\PC\Documents\apocalipse\o-apocalipse-do-delivery\scripts\video-demo.ps1
+ID do Processo: 35508
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+
+===========================================================================
+DEMONSTRAÃ‡ÃƒO FINAL â€” O APOCALIPSE DO DELIVERY
+===========================================================================
+ExecuÃ§Ã£o iniciada em: 26/06/2026 19:13:42
+
+===========================================================================
+1. COMPLEXIDADE CICLOMÃTICA
+===========================================================================
+V(G) = nÃºmero de decisÃµes + 1
+V(G) = 2 + 1
+V(G) = 3
+
+Caminhos independentes:
+- pagamento aprovado
+- pagamento recusado
+- erro no gateway
+
+===========================================================================
+2. HISTÃ“RICO TDD â€” RED E GREEN
+===========================================================================
+c2c2a78 (HEAD -> main, origin/main, origin/HEAD) test: valida caos e recuperacao do gateway
+f49ae7a test: valida resiliencia contra thundering herd
+7b2f80a test: adiciona teste de carga black friday
+d43eb96 feat: integra aplicacao com postgres redis e toxiproxy
+4407f4f infra: adiciona postgres redis gateway e toxiproxy
+3ad184a test: alcanca mutation score superior a 90 por cento
+f9c31f1 test: fortalece suite contra mutantes sobreviventes
+becf4b9 test: configura analise de mutacao com stryker
+c24847c feat: implementa single flight contra thundering herd - green
+6e940b8 test: define protecao contra thundering herd - red
+3f44b73 test: automatiza cenarios bdd do checkout - green
+ab02fdb test: descreve cenarios bdd do checkout - red
+a4dfd6e feat: implementa contrato http da rota de checkout - green
+d38c342 test: define contrato http da rota de checkout - red
+d4fd35e feat: integra circuit breaker ao gateway resiliente - green
+672ee9d test: define falha rapida com circuit breaker aberto - red
+b3b53c3 feat: implementa circuit breaker - green
+b32ce83 test: define comportamento do circuit breaker - red
+d830534 feat: implementa retry para falhas transitorias do gateway - green
+fcad25e test: define retry para falhas transitorias do gateway - red
+
+===========================================================================
+3. TESTES JEST
+===========================================================================
+> o-apocalipse-do-delivery@1.0.0 test
+> jest --runInBand --runInBand
+
+ PASS  tests/unit/AppErrorHandling.test.js
+ PASS  tests/integration/checkout.api.test.js
+ PASS  tests/unit/PedidoValidator.test.js
+ PASS  tests/unit/GatewayPagamentoResiliente.test.js
+ PASS  tests/unit/CheckoutServiceRefactored.test.js
+ PASS  tests/unit/GatewayPagamentoResiliente.edge.test.js
+ PASS  tests/unit/PedidoValidator.edge.test.js
+ PASS  tests/legacy/CheckoutService.legacy.test.js
+ PASS  tests/unit/CircuitBreaker.test.js
+ PASS  tests/unit/PedidoConsultaService.test.js
+
+Test Suites: 10 passed, 10 total
+Tests:       75 passed, 75 total
+Snapshots:   0 total
+Time:        1.565 s
+Ran all test suites.
+
+===========================================================================
+4. CENÃRIOS BDD
+===========================================================================
+
+
+===========================================================================
+5. TESTE DE MUTAÃ‡ÃƒO
+===========================================================================
+Mutantes gerados: 282
+Mutantes mortos: 257
+Mutantes sobreviventes: 14
+Timeouts: 5
+Sem cobertura: 3
+Erros: 3
+Mutation score final: 93,91%
+
+RelatÃ³rio salvo em:
+docs\evidencias\mutacao\final\index.html
+
+===========================================================================
+6. INFRAESTRUTURA DOCKER
+===========================================================================
+
+PS>TerminatingError(Invoke-RestMethod): "{"error":"toxic not found","status":404}
+"
+Nenhuma latÃªncia ativa.
+AplicaÃ§Ã£o saudÃ¡vel.
+
+
+===========================================================================
+7. TESTE BLACK FRIDAY
+===========================================================================
+
+
+MÃ©tricas da aplicaÃ§Ã£o:
+
+
+requisicoesConsulta : 8445
+leiturasBanco       : 1
+escritasBanco       : 0
+cacheHits           : 9
+cacheMisses         : 1
+cacheWrites         : 1
+cacheLocalHits      : 8426
+cacheErros          : 0
+gatewayChamadas     : 0
+emailsEnviados      : 0
+coletadoEm          : 2026-06-26T22:14:39.188Z
+
+
+
+
+===========================================================================
+8. THUNDERING HERD â€” 10.000 REQUISIÃ‡Ã•ES
+===========================================================================
+
+
+
+MÃ©tricas da aplicaÃ§Ã£o:
+
+
+requisicoesConsulta : 10000
+leiturasBanco       : 1
+escritasBanco       : 0
+cacheHits           : 0
+cacheMisses         : 0
+cacheWrites         : 0
+cacheLocalHits      : 9998
+cacheErros          : 2
+gatewayChamadas     : 0
+emailsEnviados      : 0
+coletadoEm          : 2026-06-26T22:14:47.293Z
+
+
+
+
+ValidaÃ§Ã£o de sobrevivÃªncia do banco:
+
+
+PS>TerminatingError(Invoke-RestMethod): "{"status":"DOWN","erro":"The client is offline"}"
+AplicaÃ§Ã£o saudÃ¡vel.
+
+===========================================================================
+9. GATEWAY COM 5.000 MS DE LATÃŠNCIA
+===========================================================================
+
+PS>TerminatingError(Invoke-RestMethod): "A conexão subjacente estava fechada: A conexão foi fechada de modo inesperado."
+AplicaÃ§Ã£o saudÃ¡vel.
+PS>TerminatingError(Invoke-RestMethod): "{"error":"toxic not found","status":404}
+"
+Nenhuma latÃªncia ativa.
+LatÃªncia de 5.000 ms aplicada.
+
+
+MÃ©tricas durante a degradaÃ§Ã£o:
+
+
+requisicoesConsulta : 0
+leiturasBanco       : 0
+escritasBanco       : 435
+cacheHits           : 0
+cacheMisses         : 0
+cacheWrites         : 0
+cacheLocalHits      : 0
+cacheErros          : 0
+gatewayChamadas     : 15
+emailsEnviados      : 0
+coletadoEm          : 2026-06-26T22:15:07.618Z
+
+
+
+
+===========================================================================
+10. RECUPERAÃ‡ÃƒO E MTTR
+===========================================================================
+LatÃªncia removida.
+Aguardando seis segundos para recuperaÃ§Ã£o...
+
+
+Pedido processado apÃ³s a recuperaÃ§Ã£o:
+{"id":1876,"clienteEmail":"cliente@entregasja.com","valor":150,"status":"PROCESSADO","criadoEm":"2026-06-26T22:15:13.650Z"}
+
+MÃ©tricas finais:
+
+
+requisicoesConsulta : 0
+leiturasBanco       : 0
+escritasBanco       : 436
+cacheHits           : 0
+cacheMisses         : 0
+cacheWrites         : 0
+cacheLocalHits      : 0
+cacheErros          : 0
+gatewayChamadas     : 16
+emailsEnviados      : 1
+coletadoEm          : 2026-06-26T22:15:13.667Z
+
+
+
+
+===========================================================================
+11. ESTADO FINAL
+===========================================================================
+
+
+
+DEMONSTRAÃ‡ÃƒO FINALIZADA COM SUCESSO
+Log completo salvo em: C:\Users\PC\Documents\apocalipse\o-apocalipse-do-delivery\docs\evidencias\video\demonstracao-2026-06-26_19-13-42.txt
+PS>TerminatingError(Invoke-RestMethod): "{"error":"toxic not found","status":404}
+"
+Nenhuma latÃªncia ativa.
+**********************
+Fim da transcrição do Windows PowerShell
+Hora de término: 20260626191514
+**********************
