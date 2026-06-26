@@ -13,6 +13,7 @@
 class GatewayPagamentoResiliente {
   constructor({
     gatewayPagamento,
+    circuitBreaker,
     timeoutMs = 2000,
     maxTentativas = 4,
     intervaloEsperaMs = 500,
@@ -22,6 +23,13 @@ class GatewayPagamentoResiliente {
     this.timeoutMs = timeoutMs;
     this.maxTentativas = maxTentativas;
     this.intervaloEsperaMs = intervaloEsperaMs;
+
+    this.circuitBreaker =
+      circuitBreaker || {
+        verificarPermissao: () => true,
+        registrarSucesso: () => {},
+        registrarFalha: () => {}
+      };
 
     this.esperaFn =
       esperaFn ||
@@ -39,20 +47,33 @@ class GatewayPagamentoResiliente {
       tentativa <= this.maxTentativas;
       tentativa += 1
     ) {
+      this.circuitBreaker.verificarPermissao();
+
       try {
-        return await this.executarComTimeout(
+        const resultado = await this.executarComTimeout(
           valor,
           cartao
         );
+
+        this.circuitBreaker.registrarSucesso();
+
+        return resultado;
       } catch (erro) {
         ultimaFalha = erro;
+
+        const falhaTransitoria =
+          this.ehFalhaTransitoria(erro);
+
+        if (falhaTransitoria) {
+          this.circuitBreaker.registrarFalha();
+        }
 
         const possuiNovaTentativa =
           tentativa < this.maxTentativas;
 
         const deveTentarNovamente =
           possuiNovaTentativa &&
-          this.ehFalhaTransitoria(erro);
+          falhaTransitoria;
 
         if (!deveTentarNovamente) {
           throw erro;
