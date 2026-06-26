@@ -1,0 +1,10 @@
+﻿Resultado inicial do teste de mutação
+
+Mutantes gerados: 282
+Mortos: 224
+Timeouts: 4
+Sobreviventes: 44
+Sem cobertura: 9
+Erros: 1
+Mutation Score total: 81,14%
+Mutation Score coberto: 83,82%
