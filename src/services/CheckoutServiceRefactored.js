@@ -14,11 +14,17 @@
   async processar(pedido) {
     this.pedidoValidator.validar(pedido);
 
-    const respostaPagamento =
-      await this.gatewayPagamento.cobrar(
-        pedido.valor,
-        pedido.cartao
-      );
+    let respostaPagamento;
+
+    try {
+      respostaPagamento =
+        await this.gatewayPagamento.cobrar(
+          pedido.valor,
+          pedido.cartao
+        );
+    } catch (erro) {
+      return this.processarErroGateway(pedido, erro);
+    }
 
     if (respostaPagamento.status === 'APROVADO') {
       return this.processarPagamentoAprovado(pedido);
@@ -48,6 +54,22 @@
     );
 
     await this.pedidoRepository.salvar(pedidoRecusado);
+
+    return null;
+  }
+
+  async processarErroGateway(pedido, erro) {
+    console.error(
+      'Falha no gateway de pagamento:',
+      erro.message
+    );
+
+    const pedidoComErro = this.criarPedidoComStatus(
+      pedido,
+      'ERRO_GATEWAY'
+    );
+
+    await this.pedidoRepository.salvar(pedidoComErro);
 
     return null;
   }
