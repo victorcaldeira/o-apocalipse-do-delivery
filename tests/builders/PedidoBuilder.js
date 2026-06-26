@@ -43,11 +43,16 @@
   }
 
   build() {
+    const cartao = this.pedido.cartao;
+
+    const cartaoClonado =
+      Object.prototype.toString.call(cartao) === '[object Object]'
+        ? { ...cartao }
+        : cartao;
+
     return {
       ...this.pedido,
-      cartao: this.pedido.cartao
-        ? { ...this.pedido.cartao }
-        : this.pedido.cartao
+      cartao: cartaoClonado
     };
   }
 }
