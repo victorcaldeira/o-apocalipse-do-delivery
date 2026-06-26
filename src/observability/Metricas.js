@@ -1,4 +1,4 @@
-﻿class Metricas {
+class Metricas {
   constructor() {
     this.resetar();
   }
@@ -23,6 +23,8 @@
       cacheHits: 0,
       cacheMisses: 0,
       cacheWrites: 0,
+      cacheLocalHits: 0,
+      cacheErros: 0,
       gatewayChamadas: 0,
       emailsEnviados: 0
     };

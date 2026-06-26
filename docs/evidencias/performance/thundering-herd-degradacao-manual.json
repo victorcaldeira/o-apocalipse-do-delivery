@@ -1,0 +1,13 @@
+{
+    "requisicoesConsulta":  2,
+    "leiturasBanco":  1,
+    "escritasBanco":  0,
+    "cacheHits":  0,
+    "cacheMisses":  0,
+    "cacheWrites":  0,
+    "cacheLocalHits":  1,
+    "cacheErros":  3,
+    "gatewayChamadas":  0,
+    "emailsEnviados":  0,
+    "coletadoEm":  "2026-06-26T02:41:43.703Z"
+}

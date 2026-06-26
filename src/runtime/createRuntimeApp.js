@@ -1,4 +1,4 @@
-﻿const {
+const {
   createApp
 } = require('../app');
 
@@ -33,8 +33,13 @@ function createRuntimeApp({
     }
   });
 
-  app.get('/pedidos/:id', async (request, response) => {
-    const idPedido = Number(request.params.id);
+  app.get('/pedidos/:id', async (
+    request,
+    response
+  ) => {
+    const idPedido = Number(
+      request.params.id
+    );
 
     if (
       !Number.isInteger(idPedido) ||
@@ -71,7 +76,8 @@ function createRuntimeApp({
       );
 
       return response.status(503).json({
-        erro: 'Consulta temporariamente indisponível'
+        erro:
+          'Consulta temporariamente indisponível'
       });
     }
   });
@@ -80,11 +86,22 @@ function createRuntimeApp({
     _request,
     response
   ) => {
-    await cache.limpar();
+    pedidoConsultaService.limparCacheLocal();
 
-    return response.status(200).json({
-      mensagem: 'Cache limpo com sucesso'
-    });
+    try {
+      await cache.limpar();
+
+      return response.status(200).json({
+        mensagem:
+          'Caches Redis e local limpos com sucesso'
+      });
+    } catch (erro) {
+      return response.status(200).json({
+        mensagem:
+          'Cache local limpo; Redis indisponível',
+        degradado: true
+      });
+    }
   });
 
   app.post('/admin/metrics/reset', (

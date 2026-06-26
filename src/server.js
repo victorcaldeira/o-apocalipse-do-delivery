@@ -1,4 +1,4 @@
-﻿const {
+const {
   Pool
 } = require('pg');
 
@@ -59,7 +59,22 @@ async function iniciar() {
   });
 
   const redisClient = createClient({
-    url: process.env.REDIS_URL
+    url: process.env.REDIS_URL,
+    disableOfflineQueue: true,
+    socket: {
+      reconnectStrategy: (tentativas) => {
+        const atrasoExponencial = Math.min(
+          100 * (2 ** tentativas),
+          2000
+        );
+
+        const jitter = Math.floor(
+          Math.random() * 100
+        );
+
+        return atrasoExponencial + jitter;
+      }
+    }
   });
 
   redisClient.on('error', (erro) => {
@@ -125,7 +140,9 @@ async function iniciar() {
     new PedidoConsultaService({
       pedidoRepository,
       cache,
-      ttlSegundos: 60
+      ttlSegundos: 60,
+      ttlCacheLocalMs: 5000,
+      metricas
     });
 
   const app = createRuntimeApp({
@@ -141,8 +158,11 @@ async function iniciar() {
   );
 
   const servidor = app.listen(
-    porta,
-    '0.0.0.0',
+    {
+      port: porta,
+      host: '0.0.0.0',
+      backlog: 10000
+    },
     () => {
       console.log(
         `Aplicação executando na porta ${porta}`
