@@ -1,0 +1,11 @@
+{
+    "requisicoesConsulta":  8417,
+    "leiturasBanco":  1,
+    "escritasBanco":  0,
+    "cacheHits":  8416,
+    "cacheMisses":  1,
+    "cacheWrites":  1,
+    "gatewayChamadas":  0,
+    "emailsEnviados":  0,
+    "coletadoEm":  "2026-06-26T02:25:37.596Z"
+}
