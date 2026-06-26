@@ -142,4 +142,37 @@ describe('CheckoutServiceRefactored', () => {
       'Servidor de e-mail indisponível'
     );
   });
+
+  test('deve salvar como ERRO_GATEWAY quando ocorrer falha de infraestrutura', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    gatewayStub.cobrar.mockRejectedValue(
+      new Error('ECONNRESET')
+    );
+
+    const pedido = new PedidoBuilder().build();
+
+    const resultado = await checkoutService.processar(pedido);
+
+    expect(gatewayStub.cobrar).toHaveBeenCalledTimes(1);
+
+    expect(repositoryStub.salvar).toHaveBeenCalledTimes(1);
+    expect(repositoryStub.salvar).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'ERRO_GATEWAY'
+      })
+    );
+
+    expect(emailMock.enviarConfirmacao).not.toHaveBeenCalled();
+    expect(resultado).toBeNull();
+    expect(pedido.status).toBe('PENDENTE');
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Falha no gateway de pagamento:',
+      'ECONNRESET'
+    );
+  });
 });
+
